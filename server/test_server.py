@@ -21,3 +21,21 @@ class TestServer(TestCase):
         self.assertTrue('hello' in json_response)
         self.assertTrue(json_response['hello'] == "world")
 
+    def test_products_are_returned(self):
+        response = self.client.get("/api/products")
+
+        json_response = json.loads(response.data.decode('utf8'))
+
+        self.assertTrue('rows' in json_response)
+        self.assertEquals(len(json_response['rows']), 30)
+
+    def test_products_are_filtered(self):
+        response = self.client.get("/api/products?product_id=0")
+        json_response = json.loads(response.data.decode('utf8'))
+        self.assertTrue('rows' in json_response)
+        self.assertEquals(len(json_response['rows']), 10)
+
+        response = self.client.get("/api/products?product_name=Comblissimo")
+        json_response = json.loads(response.data.decode('utf8'))
+        self.assertTrue('rows' in json_response)
+        self.assertEquals(len(json_response['rows']), 10)
